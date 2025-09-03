@@ -20,6 +20,13 @@ function App() {
   const [color2, setColor2] = useState("#ec4899");
   const [effect, setEffect] = useState("fade");
   const [exported, setExported] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(exported);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
+  };
 
   const words = headline.split(" ");
 
@@ -34,10 +41,13 @@ function App() {
     color2,
     effect,
   };
-  console.log(fontFamily, "check out ");
 
   const handleExport = () => {
-    setExported(JSON.stringify(settings, null, 2));
+    if (exported) {
+      setExported("");
+    } else {
+      setExported(JSON.stringify(settings, null, 2));
+    }
   };
 
   const containerVariants = {
@@ -147,7 +157,7 @@ function App() {
               variants={glowVariants}
               initial="initial"
               whileHover="hover"
-              className="bg-white/5 backdrop-blur-2xl flex-col border border-white/10 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl min-h-[10px] flex relative overflow-hidden"
+              className="bg-white/5 backdrop-blur-2xl flex-col border border-white/10 rounded-3xl p-16 shadow-2xl min-h-[10px] flex relative overflow-hidden"
             >
               {/* Subtle grid pattern */}
               <div className="absolute inset-0 opacity-40">
@@ -294,7 +304,7 @@ function App() {
           </motion.div>
         </div>
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 mt-10 xl:grid-cols-3 gap-8">
           <motion.div
             variants={itemVariants}
             className="xl:col-span-1 space-y-6"
@@ -310,7 +320,7 @@ function App() {
                 Style Customizations
               </h3>
 
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid xl:grid-cols-4 gap-4">
                 <div>
                   <label className="block mb-2 text-sm font-medium text-slate-300">
                     Font Size
@@ -387,35 +397,37 @@ function App() {
                     </div>
                   </div>
                 )}
-                {gradientOn && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="w-full"
-                  >
-                    <label className="block mb-2 text-xs font-medium text-slate-400">
-                      Direction
-                    </label>
-                    <select
-                      value={direction}
-                      onChange={(e) => setDirection(e.target.value)}
-                      className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                <motion.div className="mb-16">
+                  {gradientOn && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="w-full"
                     >
-                      <option value="to-r" className="bg-slate-800">
-                        Left to Right →
-                      </option>
-                      <option value="to-l" className="bg-slate-800">
-                        Left to Right ←
-                      </option>
-                      <option value="to-b" className="bg-slate-800">
-                        Top to Bottom ↓
-                      </option>
-                      <option value="to-t" className="bg-slate-800">
-                        Bottom to Top ↑
-                      </option>
-                    </select>
-                  </motion.div>
-                )}
+                      <label className="block mb-2 text-xs font-medium text-slate-400">
+                        Direction
+                      </label>
+                      <select
+                        value={direction}
+                        onChange={(e) => setDirection(e.target.value)}
+                        className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      >
+                        <option value="to-r" className="bg-slate-800">
+                          Left to Right →
+                        </option>
+                        <option value="to-l" className="bg-slate-800">
+                          Left to Right ←
+                        </option>
+                        <option value="to-b" className="bg-slate-800">
+                          Top to Bottom ↓
+                        </option>
+                        <option value="to-t" className="bg-slate-800">
+                          Bottom to Top ↑
+                        </option>
+                      </select>
+                    </motion.div>
+                  )}
+                </motion.div>
 
                 <div>
                   <label className="text-xs block mb-2 font-xs text-slate-400">
@@ -469,63 +481,47 @@ function App() {
               </div>
             </motion.div>
           </motion.div>
-          <motion.div
-            variants={glowVariants}
-            initial="initial"
-            whileHover="hover"
-            className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+
+          <motion.button
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleExport}
+            className={`bg-gradient-to-r from-indigo-600 ${
+              exported ? "mb-0" : "mb-4"
+            } mt-0 to-purple-600 max-w-[230px] ml-auto hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2`}
           >
-            <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
-              Export
-            </h3>
-
-            <motion.button
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleExport}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+            <motion.span
+              animate={{ rotate: exported ? 360 : 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <motion.span
-                animate={{ rotate: exported ? 360 : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                📋
-              </motion.span>
-              Export Settings
-            </motion.button>
+              📋
+            </motion.span>
+            Export Style Settings
+          </motion.button>
 
-            {exported && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4"
+          {exported && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative mb-5"
+            >
+              {/* Copy Button */}
+              <button
+                onClick={handleCopy}
+                className="absolute top-2 right-2 bg-emerald-500 text-white z-50 cursor-pointer text-xs px-3 py-1 rounded-md shadow-md"
               >
-                <motion.pre
-                  whileHover={{ scale: 1.01 }}
-                  className="bg-slate-900/80 text-emerald-300 text-xs p-4 rounded-xl overflow-x-auto border border-emerald-400/20 shadow-lg"
-                >
-                  {exported}
-                </motion.pre>
-              </motion.div>
-            )}
-          </motion.div>
-          {/* </motion.div> */}
+                {copied ? "Copied" : "Copy"}
+              </button>
+
+              <motion.pre
+                whileHover={{ scale: 1.01 }}
+                className="bg-slate-900/80 text-emerald-300 text-xs p-4 rounded-xl overflow-x-auto border border-emerald-400/20 shadow-lg"
+              >
+                {exported}
+              </motion.pre>
+            </motion.div>
+          )}
         </div>
-
-        {/* Bottom decoration */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
-          className="mt-16 text-center"
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="inline-block w-8 h-8 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full"
-          />
-        </motion.div>
       </motion.div>
 
       <style>{`
