@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+// Extend Window interface for SpeechRecognition
+declare global {
+  interface Window {
+    SpeechRecognition: typeof window.webkitSpeechRecognition;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    webkitSpeechRecognition: any;
+  }
+}
+
 const fonts = [
   "sans-serif",
   "serif",
@@ -99,13 +108,23 @@ function App() {
     recognition.start();
     setIsListening(true); // 🎤 Mic ON
 
-    recognition.onresult = (event) => {
+    interface SpeechRecognitionEventResult {
+      [index: number]: {
+        transcript: string;
+      };
+    }
+
+    interface SpeechRecognitionEvent extends Event {
+      results: SpeechRecognitionEventResult[];
+    }
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = event.results[0][0].transcript;
       setHeadline(transcript);
       setIsListening(false); // কাজ শেষ হলে বন্ধ
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: { error: string }) => {
       console.error("Speech recognition error", event.error);
       setIsListening(false);
     };
