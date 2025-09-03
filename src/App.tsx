@@ -208,7 +208,7 @@ function App() {
               variants={glowVariants}
               initial="initial"
               whileHover="hover"
-              className="bg-white/5 backdrop-blur-2xl flex-col border border-white/10 rounded-3xl p-16 shadow-2xl min-h-[200px] flex relative overflow-hidden"
+              className="bg-white/5 backdrop-blur-2xl flex-col border border-white/10 rounded-3xl px-4 sm:px-14 py-20 pt-14 shadow-2xl sm:min-h-[200px] flex relative overflow-hidden"
             >
               {/* Subtle grid pattern */}
               <div className="absolute inset-0 opacity-40">
@@ -406,7 +406,7 @@ function App() {
               />
               <button
                 onClick={startListening}
-                className={`px-3 py-2 z-50  rounded-xl shadow-md transition-all ${
+                className={`px-3 py-2 z-50 cursor-pointer rounded-xl shadow-md transition-all ${
                   isListening
                     ? "bg-red-500 animate-pulse"
                     : "to-purple-600 bg-gradient-to-r from-indigo-600 hover:from-indigo-700 hover:to-purple-700"
@@ -609,7 +609,7 @@ function App() {
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleExport}
-            className={`bg-gradient-to-r from-indigo-600 ${
+            className={`bg-gradient-to-r cursor-pointer from-indigo-600 ${
               exported ? "mb-0" : "mb-4"
             } mt-0 to-purple-600 max-w-[230px] ml-auto hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2`}
           >
