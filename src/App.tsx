@@ -220,6 +220,15 @@ function App() {
                 }}
                 className="absolute bottom-8 left-8 w-12 h-12 bg-pink-400 rounded-full opacity-40"
               />
+              <motion.div
+                animate={{ y: [-20, 20, -20] }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute bottom-8 left-8 w-12 h-12 bg-pink-400 rounded-full opacity-40"
+              />
 
               <motion.div
                 key={headline + effect}
@@ -277,7 +286,7 @@ function App() {
                               y: -5,
                               transition: { duration: 0.2 },
                             }}
-                            className={`inline-block`}
+                            className="inline-block"
                           >
                             {char}
                           </motion.span>
@@ -291,7 +300,7 @@ function App() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.2 }}
-                        className={`inline-block mr-3 sm:mr-4`}
+                        className="inline-block mr-3 sm:mr-4"
                       >
                         {word.split("").map((char, j) => (
                           <motion.span
@@ -310,6 +319,47 @@ function App() {
                         ))}
                       </motion.span>
                     ))
+                  : effect === "highlight"
+                  ? words.map((word, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1, duration: 0.5 }}
+                        whileHover={{ scale: 1.1 }}
+                        className="inline-block mr-3 sm:mr-4 relative"
+                      >
+                        <span className="relative bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent px-2 z-10">
+                          {word}
+                        </span>
+                        <span className="absolute inset-0 text-emerald-300 rounded-md -z-0"></span>
+                      </motion.span>
+                    ))
+                  : effect === "underline"
+                  ? words.map((word, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1, duration: 0.5 }}
+                        className="inline-block mr-3 text-indigo-400 sm:mr-4 relative"
+                      >
+                        {word}
+                        <span className="block w-full h-[3px] bg-indigo-400 rounded-full mt-1"></span>
+                      </motion.span>
+                    ))
+                  : effect === "block"
+                  ? words.map((word, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.1, duration: 0.5 }}
+                        className="inline-block mr-3 sm:mr-4 text-white bg-slate-600/40 px-2 py-1 rounded-md"
+                      >
+                        {word}
+                      </motion.span>
+                    ))
                   : words.map((word, i) => (
                       <motion.span
                         key={i}
@@ -317,7 +367,7 @@ function App() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.1, duration: 0.5 }}
                         whileHover={{ scale: 1.05 }}
-                        className={`inline-block mr-3 sm:mr-4 transition-transform`}
+                        className="inline-block mr-3 sm:mr-4 transition-transform"
                       >
                         {word}
                       </motion.span>
@@ -520,6 +570,15 @@ function App() {
                     </option>
                     <option value="wave" className="bg-slate-800">
                       Wave
+                    </option>
+                    <option value="underline" className="bg-slate-800">
+                      underline
+                    </option>
+                    <option value="block" className="bg-slate-800">
+                      block
+                    </option>
+                    <option value="highlight" className="bg-slate-800">
+                      highlight
                     </option>
                   </select>
                 </motion.div>
