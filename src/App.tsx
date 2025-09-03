@@ -10,7 +10,7 @@ const fonts = [
   "Arial",
 ];
 function App() {
-  const [headline, setHeadline] = useState("Build Amazing Headlines");
+  const [headline, setHeadline] = useState("Build Amazing Headline...");
   const [fontSize, setFontSize] = useState(56);
   const [fontWeight, setFontWeight] = useState(700);
   const [fontFamily, setFontFamily] = useState(fonts[0]);
@@ -18,9 +18,10 @@ function App() {
   const [direction, setDirection] = useState("to-r");
   const [color1, setColor1] = useState("#6366f1");
   const [color2, setColor2] = useState("#ec4899");
-  const [effect, setEffect] = useState("fade");
+  const [effect, setEffect] = useState("bounce");
   const [exported, setExported] = useState("");
   const [copied, setCopied] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(exported);
@@ -41,7 +42,6 @@ function App() {
     color2,
     effect,
   };
-
   const handleExport = () => {
     if (exported) {
       setExported("");
@@ -58,7 +58,6 @@ function App() {
       transition: {
         duration: 0.8,
         staggerChildren: 0.1,
-        //  ease: [0.25, 0.46, 0.45, 0.94]
       },
     },
   };
@@ -70,7 +69,6 @@ function App() {
       y: 0,
       transition: {
         duration: 0.5,
-        // ease: [0.25, 0.46, 0.45, 0.94]
       },
     },
   };
@@ -81,6 +79,40 @@ function App() {
       boxShadow: "0 0 40px rgba(99, 102, 241, 0.3)",
       transition: { duration: 0.3 },
     },
+  };
+
+  // Add Microphone for voice editing headline
+  const startListening = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Your browser does not support Speech Recognition 😢");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+    setIsListening(true); // 🎤 Mic ON
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setHeadline(transcript);
+      setIsListening(false); // কাজ শেষ হলে বন্ধ
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false); // Mic বন্ধ হয়ে গেলে reset
+    };
   };
 
   return (
@@ -130,14 +162,14 @@ function App() {
         className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="text-center mb-12">
+        <motion.div variants={itemVariants} className="text-center mb-8">
           <motion.h1
-            className="text-4xl mt-4 sm:text-5xl text-slate-400 lg:text-6xl font-bold mb-4"
+            className="text-3xl mt-4 sm:text-4xl text-slate-400 lg:text-5xl font-bold mb-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Headline Studio
+            FunnelCare Headline Studio
           </motion.h1>
           <motion.p
             className="text-lg text-slate-500 max-w-2xl mx-auto"
@@ -157,7 +189,7 @@ function App() {
               variants={glowVariants}
               initial="initial"
               whileHover="hover"
-              className="bg-white/5 backdrop-blur-2xl flex-col border border-white/10 rounded-3xl p-16 shadow-2xl min-h-[10px] flex relative overflow-hidden"
+              className="bg-white/5 backdrop-blur-2xl flex-col border border-white/10 rounded-3xl p-16 shadow-2xl min-h-[200px] flex relative overflow-hidden"
             >
               {/* Subtle grid pattern */}
               <div className="absolute inset-0 opacity-40">
@@ -292,15 +324,28 @@ function App() {
                     ))}
               </motion.div>
             </motion.div>
-            <motion.input
-              whileFocus={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              type="text"
-              value={headline}
-              onChange={(e) => setHeadline(e.target.value)}
-              className="bg-white/10 border border-white/20 flex min-w-1/5 mx-auto mt-[-60px] z-50 relative rounded-xl px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
-              placeholder="Enter your headline..."
-            />
+            <div className="flex items-center justify-center mx-auto mt-[-60px] z-50 gap-2">
+              <motion.input
+                whileFocus={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                type="text"
+                autoFocus
+                value={headline}
+                onChange={(e) => setHeadline(e.target.value)}
+                className="bg-white/10 border bg-white/20 relative rounded-xl px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+                placeholder="Enter your headline..."
+              />
+              <button
+                onClick={startListening}
+                className={`px-3 py-2 z-50  rounded-xl shadow-md transition-all ${
+                  isListening
+                    ? "bg-red-500 animate-pulse"
+                    : "to-purple-600 bg-gradient-to-r from-indigo-600 hover:from-indigo-700 hover:to-purple-700"
+                } text-white`}
+              >
+                {isListening ? "🎙 Listening..." : "🎙️ Voice"}
+              </button>
+            </div>
           </motion.div>
         </div>
         {/* Main Content Grid */}
@@ -347,8 +392,8 @@ function App() {
                     value={fontWeight}
                     onChange={(e) => setFontWeight(Number(e.target.value))}
                     className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
-                    min={100}
-                    max={900}
+                    min={500}
+                    max={800}
                     step={100}
                   />
                   <span className="text-xs text-slate-400">{fontWeight}</span>
